@@ -314,7 +314,7 @@ def run_discord_bot(discord):
         await ctx.send("My memory is wiped 🥀")
 
 
-    @bot.command(name='toggle_wardens')
+    @bot.command(name='toggle_warden')
     @commands.has_permissions(administrator=True)
     async def toggle_wardens(ctx):
         # """Toggles the creepy message loop on or off."""
