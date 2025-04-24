@@ -38,11 +38,15 @@ def run_discord_bot(discord):
 
 
     corrupted_channels = {}
+    
+    
+    global wardens_loop_enabled
     wardens_loop_enabled = False
 
     @tasks.loop(minutes=5)
     async def crypticloop():
         global wardens_loop_enabled
+        
         if wardens_loop_enabled:
             creepy_messages = [
             "( dread:(unseen_watcher) .type-(premature_burial) )",
