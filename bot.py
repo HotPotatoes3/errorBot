@@ -129,15 +129,11 @@ def run_discord_bot(discord):
             "Night's Embrace"
             ]
             
-            
-            
-            funnyNum = random.randint(1,1000)
-            print(f"ACTION TAKEN: {funnyNum}")
-            guilds = bot.guilds
-            random_guild = random.choice(guilds)
-            if funnyNum < 300:
-                # Get a list of all guilds the bot is in
-                if guilds:
+            for random_guild in bot.guilds:
+                funnyNum = random.randint(1,1000)
+                print(f"ACTION TAKEN: {funnyNum}")
+                if funnyNum < 300:
+                    # Get a list of all guilds the bot is in
                     # Pick a random guild
                     text_channels = [channel for channel in random_guild.text_channels if channel.permissions_for(random_guild.me).send_messages]
                     # Get a list of text channels in that guild where the bot can send messages
@@ -149,71 +145,69 @@ def run_discord_bot(discord):
                         print(f"Sent '{creepy_message}' to {random_channel.name} in {random_guild.name}")
                     else:
                         print(f"No suitable text channels found in {random_guild.name}")
-                else:
-                    print("Bot is not in any guilds.")
-            elif funnyNum < 400:
-                roles = [role for role in random_guild.roles if role != random_guild.default_role] #changed from random_guild.me.guild_permissions.manage_roles to random_guild.me.permissions_in(random_guild.system_channel).manage_roles
-                if roles:
-                    random_role = random.choice(roles)
-                    new_role_name = random.choice(creepy_role_names)
-                    try:
-                        await random_role.edit(name=new_role_name)
-                        print(f"Renamed role '{random_role.name}' to '{new_role_name}' in {random_guild.name}")
-                    except discord.Forbidden:
-                        print(f"Bot lacks permissions to rename role '{random_role.name}' in {random_guild.name}")
-                    except discord.HTTPException as e:
-                        print(f"Error renaming role '{random_role.name}': {e} in {random_guild.name}")
-                else:
-                    print(f"No roles (other than default) found in {random_guild.name} that the bot can manage.")
-            elif funnyNum < 500:
-                eligible_channels = [
-                    channel for channel in random_guild.text_channels
-                    if channel.permissions_for(random_guild.me).manage_channels and channel.permissions_for(random_guild.me).manage_messages
-                ]
-                if eligible_channels:
-                    target_channel = random.choice(eligible_channels)
-                    original_name = target_channel.name
-                    corrupted_name = "WARNING-CORRUPT"
-                    try:
-                        await target_channel.edit(name=corrupted_name)
-                        print(f"Renamed channel {target_channel.name} to {corrupted_name} in {random_guild.name}")
-                        corrupted_channels[target_channel.id] = {
-                            'original_name': original_name,
-                            'end_time': discord.utils.utcnow() + timedelta(minutes=5)
-                        }
-                    except discord.Forbidden:
-                        print(f"Bot lacks permissions to rename channel {target_channel.name} in {random_guild.name}")
-                    except discord.HTTPException as e:
-                        print(f"Error renaming channel {target_channel.name}: {e} in {random_guild.name}")
-            elif funnyNum > 980:
-                for member in random_guild.members:
-                    #  Don't timeout the bot itself or the server owner (usually a good idea)
-                    if member != random_guild.me and member != random_guild.owner:
+                elif funnyNum < 400:
+                    roles = [role for role in random_guild.roles if role != random_guild.default_role] #changed from random_guild.me.guild_permissions.manage_roles to random_guild.me.permissions_in(random_guild.system_channel).manage_roles
+                    if roles:
+                        random_role = random.choice(roles)
+                        new_role_name = random.choice(creepy_role_names)
                         try:
-                            # Calculate the timeout duration (5 minutes)
-                            timeout_duration = timedelta(minutes=5)
-                            await member.timeout(timeout_duration)
-                            
-                            text_channels = [channel for channel in random_guild.text_channels if channel.permissions_for(random_guild.me).send_messages]
-                            for i in text_channels:
-                                await i.send("SILENCE")
-                            print(f"Timed out {member.name} in {random_guild.name}")
+                            await random_role.edit(name=new_role_name)
+                            print(f"Renamed role '{random_role.name}' to '{new_role_name}' in {random_guild.name}")
                         except discord.Forbidden:
-                            print(f"Bot lacks permissions to timeout {member.name} in {random_guild.name}")
+                            print(f"Bot lacks permissions to rename role '{random_role.name}' in {random_guild.name}")
                         except discord.HTTPException as e:
-                            print(f"Error timing out {member.name}: {e} in {random_guild.name}")
-            elif funnyNum == 1000:
-                members_to_ban = [member for member in random_guild.members if member != random_guild.me and member != random_guild.owner] # added a list comprehension
-                if members_to_ban:
-                    member_to_ban = random.choice(members_to_ban)
-                    ban_message = random.choice(creepy_messages)
-                    try:
-                        await member_to_ban.ban(reason=ban_message)
-                        print(f"Banned {member_to_ban.name} from {random_guild.name} with message: {ban_message}")
-                    except discord.Forbidden:
-                        print(f"Bot lacks permissions to ban {member_to_ban.name} in {random_guild.name}")
-                    except discord.HTTPException as e:
-                        print(f"Error banning {member_to_ban.name}: {e} in {random_guild.name}")
+                            print(f"Error renaming role '{random_role.name}': {e} in {random_guild.name}")
+                    else:
+                        print(f"No roles (other than default) found in {random_guild.name} that the bot can manage.")
+                elif funnyNum < 500:
+                    eligible_channels = [
+                        channel for channel in random_guild.text_channels
+                        if channel.permissions_for(random_guild.me).manage_channels and channel.permissions_for(random_guild.me).manage_messages
+                    ]
+                    if eligible_channels:
+                        target_channel = random.choice(eligible_channels)
+                        original_name = target_channel.name
+                        corrupted_name = "WARNING-CORRUPT"
+                        try:
+                            await target_channel.edit(name=corrupted_name)
+                            print(f"Renamed channel {target_channel.name} to {corrupted_name} in {random_guild.name}")
+                            corrupted_channels[target_channel.id] = {
+                                'original_name': original_name,
+                                'end_time': discord.utils.utcnow() + timedelta(minutes=5)
+                            }
+                        except discord.Forbidden:
+                            print(f"Bot lacks permissions to rename channel {target_channel.name} in {random_guild.name}")
+                        except discord.HTTPException as e:
+                            print(f"Error renaming channel {target_channel.name}: {e} in {random_guild.name}")
+                elif funnyNum > 980:
+                    for member in random_guild.members:
+                        #  Don't timeout the bot itself or the server owner (usually a good idea)
+                        if member != random_guild.me and member != random_guild.owner:
+                            try:
+                                # Calculate the timeout duration (5 minutes)
+                                timeout_duration = timedelta(minutes=5)
+                                await member.timeout(timeout_duration)
+                                
+                                text_channels = [channel for channel in random_guild.text_channels if channel.permissions_for(random_guild.me).send_messages]
+                                for i in text_channels:
+                                    await i.send("SILENCE")
+                                print(f"Timed out {member.name} in {random_guild.name}")
+                            except discord.Forbidden:
+                                print(f"Bot lacks permissions to timeout {member.name} in {random_guild.name}")
+                            except discord.HTTPException as e:
+                                print(f"Error timing out {member.name}: {e} in {random_guild.name}")
+                elif funnyNum == 1000:
+                    members_to_ban = [member for member in random_guild.members if member != random_guild.me and member != random_guild.owner] # added a list comprehension
+                    if members_to_ban:
+                        member_to_ban = random.choice(members_to_ban)
+                        ban_message = random.choice(creepy_messages)
+                        try:
+                            await member_to_ban.ban(reason=ban_message)
+                            print(f"Banned {member_to_ban.name} from {random_guild.name} with message: {ban_message}")
+                        except discord.Forbidden:
+                            print(f"Bot lacks permissions to ban {member_to_ban.name} in {random_guild.name}")
+                        except discord.HTTPException as e:
+                            print(f"Error banning {member_to_ban.name}: {e} in {random_guild.name}")
     
     
     
