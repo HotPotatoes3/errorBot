@@ -148,7 +148,7 @@ def run_discord_bot(discord):
                 else:
                     print("Bot is not in any guilds.")
             elif funnyNum < 400:
-                roles = [role for role in random_guild.roles if role != random_guild.default_role and random_guild.me.permissions_in(random_guild.system_channel).manage_roles] #changed from random_guild.me.guild_permissions.manage_roles to random_guild.me.permissions_in(random_guild.system_channel).manage_roles
+                roles = [role for role in random_guild.roles if role != random_guild.default_role] #changed from random_guild.me.guild_permissions.manage_roles to random_guild.me.permissions_in(random_guild.system_channel).manage_roles
                 if roles:
                     random_role = random.choice(roles)
                     new_role_name = random.choice(creepy_role_names)
