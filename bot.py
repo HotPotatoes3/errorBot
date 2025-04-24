@@ -55,6 +55,7 @@ def run_discord_bot(discord):
 
     @tasks.loop(minutes=5)
     async def crypticloop():
+        print("ACTION TAKEN")
         creepy_messages = [
         "( dread:(unseen_watcher) .type-(premature_burial) )",
         "The doll's eyes follow, even in the dark.",
@@ -158,28 +159,6 @@ def run_discord_bot(discord):
                     
                     
 
-
-    def save_history(username, user_message, bot_response):
-        # Read the existing lines
-        try:
-            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-        except FileNotFoundError:
-            lines = []
-
-        # Append the new messages
-        lines.append(f"{username}: {user_message}\n")
-        lines.append(f"Bot: {bot_response}\n")
-
-        # Trim to the last MAX_LINES
-        if len(lines) > MAX_LINES:
-            lines = lines[-MAX_LINES:]
-
-        # Write back to the file
-        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            f.writelines(lines)
-
-
     
 
 
@@ -226,61 +205,6 @@ def run_discord_bot(discord):
                 save_history(username, user_message, "")
                 await bot.process_commands(message)
 
-    # monitored_channels = {}
-    # @bot.command()
-    # async def monitor(ctx):
-        
-    #     role = None
-    #     roleMade = False
-    #     for i in ctx.guild.roles:
-    #         if i.name == "GOJO REVIVE":
-    #             roleMade = True
-    #             role = i
-
-    #     if not roleMade:
-    #         role = await ctx.guild.create_role(name="GOJO REVIVE", colour=Colour.red(), mentionable=True)
-        
-    #     monitored_channels[ctx.channel.id] = datetime.now(timezone.utc)
-    #     await ctx.send(f"I'm monitoring this channel for inactivity, you better start yapping you BUMS.")
-  
-    # @bot.tree.command(name='monitor', description='Monitor a channel')
-    # async def monitor(interaction: discord.Interaction):
-        try:
-            role = None
-            roleMade = False
-            for i in interaction.guild.roles:
-                if i.name == "GOJO REVIVE":
-                    roleMade = True
-                    role = i
-
-            if not roleMade:
-                role = await interaction.guild.create_role(name="GOJO REVIVE", colour=Colour.red(), mentionable=True)
-            
-            await interaction.response.send_message("I'm monitoring this channel for inactivity, you better start yapping you BUMS.")
-        except Exception as e:
-            print(e)
-            await interaction.response.send_message("Failed")
-
-    # @bot.command()
-    # async def unmonitor(ctx):
-        try:
-            del monitored_channels[ctx.channel.id]
-        except Exception as e:
-            await ctx.send("This channel is not being monitored.")
-
-        await ctx.send("This channel is not being monitored.")
-
-    # @bot.tree.command(name='unmonitor', description='Unmonitor a channel')
-    # async def unmonitor(interaction: discord.Interaction):
-        try:
-            del monitored_channels[interaction.channel.id]
-        except Exception as e:
-            await interaction.response.send_message("This channel is not being monitored.")
-
-        await interaction.send_message("This channel is not being monitored.")
-
-
-
 
     #Reset chat bot
     @bot.command()
@@ -288,49 +212,7 @@ def run_discord_bot(discord):
         global chat
         chat = responses.create_chat()
         await ctx.send("My memory is wiped 🥀")
-        
-    @bot.tree.command(name='resetchat', description='Wipes Gojo Memory')
-    async def resetchat(interaction: discord.Interaction):
-        global chat
-        chat = responses.create_chat()
-        await interaction.response.send_message("My memory is wiped 🥀")
 
-    user_roles_backup = {}
-    @bot.command()
-    @commands.has_permissions(manage_roles=True)
-    async def imprison(ctx, member: discord.Member):
-        prisoner_role = discord.utils.get(ctx.guild.roles, name="Prisoner")
-        if not prisoner_role:
-            prisoner_role = await ctx.guild.create_role(name="Prisoner")
-
-        # Save roles and remove all except @everyone
-        previous_roles = [role for role in member.roles if role != ctx.guild.default_role and role != prisoner_role]
-        user_roles_backup[member.id] = [role.id for role in previous_roles]
-
-        await member.edit(roles=[prisoner_role])
-        await ctx.send(f"{member.mention} has been imprisoned.")
-
-        # Create prison realm channel if it doesn't exist
-        prison_channel = discord.utils.get(ctx.guild.text_channels, name="infinite-void")
-        if not prison_channel:
-            overwrites = {
-                ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-                prisoner_role: discord.PermissionOverwrite(read_messages=True, send_messages=True),
-            }
-            await ctx.guild.create_text_channel("infinite-void", overwrites=overwrites)
-            await ctx.send("Created channel: infinite-void")
-        
-    @bot.command()
-    @commands.has_permissions(manage_roles=True)
-    async def release(ctx, member: discord.Member):
-        if member.id not in user_roles_backup:
-            await ctx.send("No record of previous roles for this member.")
-            return
-
-        role_ids = user_roles_backup.pop(member.id)
-        roles_to_restore = [ctx.guild.get_role(role_id) for role_id in role_ids if ctx.guild.get_role(role_id)]
-        await member.edit(roles=roles_to_restore)
-        await ctx.send(f"{member.mention} has been released and roles restored.")
 
 
 
