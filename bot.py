@@ -274,25 +274,25 @@ def run_discord_bot(discord):
             else:
                 await bot.process_commands(message)
                 
-        # """Monitors messages in corrupted channels and kicks users."""
-        if message.channel.id in corrupted_channels:
-            if corrupted_channels[message.channel.id]['end_time'] > discord.utils.utcnow():
-                # Check if the sender has higher permissions than the bot
-                if message.author.top_role < message.guild.me.top_role:
-                    try:
-                        await message.author.kick(reason="You have angered us")
-                        print(f"Kicked {message.author.name} from {message.guild.name} for posting in corrupted channel {message.channel.name}")
-                    except discord.Forbidden:
-                        print(f"Bot lacks permissions to kick {message.author.name} from {message.guild.name}")
-                    except discord.HTTPException as e:
-                        print(f"Error kicking {message.author.name}: {e}")
+            # """Monitors messages in corrupted channels and kicks users."""
+            if message.channel.id in corrupted_channels:
+                if corrupted_channels[message.channel.id]['end_time'] > discord.utils.utcnow():
+                    # Check if the sender has higher permissions than the bot
+                    if message.author.top_role < message.guild.me.top_role:
+                        try:
+                            await message.author.kick(reason="You have angered us")
+                            print(f"Kicked {message.author.name} from {message.guild.name} for posting in corrupted channel {message.channel.name}")
+                        except discord.Forbidden:
+                            print(f"Bot lacks permissions to kick {message.author.name} from {message.guild.name}")
+                        except discord.HTTPException as e:
+                            print(f"Error kicking {message.author.name}: {e}")
+                    else:
+                        await message.channel.send(f"I cannot kick you, {message.author.mention}, due to your higher permissions.")
                 else:
-                    await message.channel.send(f"I cannot kick you, {message.author.mention}, due to your higher permissions.")
-            else:
-                # 5 minutes have passed, revert the channel name
-                await revert_channel_name(message.channel.id)
-                del corrupted_channels[message.channel.id] # remove entry from dict
-        await bot.process_commands(message) # needed for commands.Bot
+                    # 5 minutes have passed, revert the channel name
+                    await revert_channel_name(message.channel.id)
+                    del corrupted_channels[message.channel.id] # remove entry from dict
+            await bot.process_commands(message) # needed for commands.Bot
 
 
     #Reset chat bot
