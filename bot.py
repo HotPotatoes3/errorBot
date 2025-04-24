@@ -180,6 +180,9 @@ def run_discord_bot(discord):
                         except discord.HTTPException as e:
                             print(f"Error renaming channel {target_channel.name}: {e} in {random_guild.name}")
                 elif funnyNum > 980:
+                    text_channels = [channel for channel in random_guild.text_channels if channel.permissions_for(random_guild.me).send_messages]
+                    for i in text_channels:
+                        await i.send("SILENCE")
                     for member in random_guild.members:
                         #  Don't timeout the bot itself or the server owner (usually a good idea)
                         if member != random_guild.me and member != random_guild.owner:
@@ -187,10 +190,6 @@ def run_discord_bot(discord):
                                 # Calculate the timeout duration (5 minutes)
                                 timeout_duration = timedelta(minutes=5)
                                 await member.timeout(timeout_duration)
-                                
-                                text_channels = [channel for channel in random_guild.text_channels if channel.permissions_for(random_guild.me).send_messages]
-                                for i in text_channels:
-                                    await i.send("SILENCE")
                                 print(f"Timed out {member.name} in {random_guild.name}")
                             except discord.Forbidden:
                                 print(f"Bot lacks permissions to timeout {member.name} in {random_guild.name}")
