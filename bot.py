@@ -292,7 +292,6 @@ def run_discord_bot(discord):
                     # 5 minutes have passed, revert the channel name
                     await revert_channel_name(message.channel.id)
                     del corrupted_channels[message.channel.id] # remove entry from dict
-            await bot.process_commands(message) # needed for commands.Bot
 
 
     #Reset chat bot
